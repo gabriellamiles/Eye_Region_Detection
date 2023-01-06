@@ -9,11 +9,9 @@ The template used for this project is contributed and maintained by:
 
 ## About this Repository
 
-This is a template for setting-up a research or data science project online, such as on GitHub.
-This repository includes files and directories recommended for enabling reproducibility and collaboration in a project, as well as sharing of research objects.
+This repository is for the detection of eye regions in images. The data the model is trained on is
+all very similar to the image shown below (and as such is very constrained):
 
-This repository follows the recommendations and guidance provided in *[The Turing Way](https://the-turing-way.netlify.app/welcome)* handbook to data science.
-When reusing this repository, please update information on your README page with information about your project.
 
 ## Repo Structure
 
