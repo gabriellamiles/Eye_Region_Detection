@@ -92,17 +92,16 @@ def load_images_to_test(filepath, ImgFolder):
 
 def load_unseen_images(unseenDataFolder):
 
-    print("[INFO] Loading unseen images...")
+    print("[INFO] Loading unseen images, large dataset: may take some time...")
 
+    # get path to directories that contain the images
     participantDirectories = [os.path.join(unseenDataFolder, i) for i in os.listdir(unseenDataFolder)]
-    print(participantDirectories)
-
     imgDirectories = []
     for participantFolder in participantDirectories:
         for testFolder in os.listdir(participantFolder):
                 imgDirectories.append(os.path.join(participantFolder, testFolder))
-    print(len(imgDirectories))
 
+    # obtain all img filepaths stored like [[filepaths for run 1], [filepaths for run 2], ...]
     imgFilepaths = []
     for imgDirectory in imgDirectories:
         tmp_filepaths = []
@@ -112,6 +111,18 @@ def load_unseen_images(unseenDataFolder):
 
         imgFilepaths.append(tmp_filepaths)
 
-    print(len(imgFilepaths))
+    # load images
+    unseenImages = []
+    for set in imgFilepaths:
+        tmp_img_storage = []
 
-    return imgFilepaths
+        for img_filepath in set:
+            image = load_img(img_filepath, target_size=(224,224))
+            image = img_to_array(image) / 255.0
+            image = np.expand_dims(image, axis=0)
+            tmp_img_storage.append(image)
+
+
+        unseenImages.append(tmp_img_storage)
+
+    return imgFilepaths, unseenImages

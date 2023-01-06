@@ -10,3 +10,4 @@
 /share
 /pyvenv.cfg
 /docs
+*.pyc
