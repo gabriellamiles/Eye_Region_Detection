@@ -1,0 +1,12 @@
+
+/bin
+/data/processed/mnt
+/include
+/lib
+/lib64
+/notebooks
+/project-management
+/reports
+/share
+/pyvenv.cfg
+/docs
