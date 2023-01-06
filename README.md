@@ -1,4 +1,6 @@
-# Template for setting up reproducible projects
+# Eye Region Detection
+
+The template used for this project is contributed and maintained by:
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-6-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
