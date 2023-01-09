@@ -30,6 +30,7 @@ def predict_unseen_images(model, imgFilepaths, unseenImages, model_directory):
     filename_count = 0
     # for each image in a participant trial
     for image in unseenImages:
+        print("Progress: " + str(filename_count) + "/" + str(len(unseenImages)))
 
         preds = model.predict(image, batch_size=1)
         preds = preds[0]*960
