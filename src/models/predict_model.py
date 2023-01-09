@@ -22,41 +22,29 @@ from data import construct_dataset
 
 def predict_unseen_images(model, imgFilepaths, unseenImages, model_directory):
 
-    count = 0
-    # for each participant trial
-    for set in unseenImages:
+    # extract key information for saving data from filename string
+    participant = imgFilepaths[0].split("eme2_square_imgs/")[-1].split("/")[0]
+    trial = imgFilepaths[0].split(participant+"/")[-1].split("/")[0]
 
-        if len(imgFilepaths[count]) == 0:
-            print("Filenames count not be retrieved from directory...")
-            count += 1
-            continue
+    tmp_predictions = []
+    filename_count = 0
+    # for each image in a participant trial
+    for image in unseenImages:
 
-        predicted_filenames = []
-        tmp_predictions = []
-        filename_count = 0
+        preds = model.predict(image, batch_size=1)
+        preds = preds[0]*960
 
-        # extract key information for saving data from filename string
-        participant = imgFilepaths[count][0].split("eme2_square_imgs/")[-1].split("/")[0]
-        trial = imgFilepaths[count][0].split(participant+"/")[-1].split("/")[0]
+        (startLX, startLY, endLX, endLY, startRX, startRY, endRX, endRY) = preds
 
-        # for each image in a participant trial
-        for image in set:
+        tmp_predictions.append([imgFilepaths[filename_count].split("eme2_square_imgs/")[-1], startLX, startLY, endLX, endLY, startRX, startRY, endRX, endRY])
 
-            preds = model.predict(image, batch_size=1)
-            preds = preds[0]*960
+        filename_count +=1
 
-            (startLX, startLY, endLX, endLY, startRX, startRY, endRX, endRY) = preds
+    # save predictions for individual participant trials separately
+    trialResults = pd.DataFrame(tmp_predictions, columns = ['filename', 'LE_left', 'LE_top', 'LE_right', 'LE_bottom', 'RE_left', 'RE_top', 'RE_right', 'RE_bottom'])
+    saveUnder = os.path.join(os.getcwd(), "models", model_directory, "predictions", participant + "_" + trial + ".csv")
+    trialResults.to_csv(saveUnder)
 
-            tmp_predictions.append([imgFilepaths[count][filename_count].split("eme2_square_imgs/")[-1], startLX, startLY, endLX, endLY, startRX, startRY, endRX, endRY])
-
-            filename_count +=1
-
-        # save predictions for individual participant trials separately
-        trialResults = pd.DataFrame(tmp_predictions, columns = ['filename', 'LE_left', 'LE_top', 'LE_right', 'LE_bottom', 'RE_left', 'RE_top', 'RE_right', 'RE_bottom'])
-        saveUnder = os.path.join(os.getcwd(), "models", model_directory, participant + "_" + trial + ".csv")
-        trialResults.to_csv(saveUnder)
-
-        count += 1
 
 def test_on_testset(model, testFilenames, testImages, testTargets, ImgFolder, model_directory):
 
@@ -99,14 +87,10 @@ if __name__ == '__main__':
     UNSEEN = 1 # 0 for test data, 1 for unseen (all images in dataset)
     ImgFolder = os.path.join(os.getcwd(), "data", "processed", "mnt", "eme2_square_imgs")
 
-    # load test set to evaluate accuracy
-    establishedTestSet = os.path.join(os.getcwd(), "data", "test.csv")
-    testFilenames, testImages, testTargets = construct_dataset.load_images_to_test(establishedTestSet, ImgFolder)
-
-    # load unseen images for prediction
-    unseen_filepaths, unseen_images = construct_dataset.load_unseen_images(ImgFolder)
-
+    #############################################################################
     # load and compile trained model
+    print("[INFO] loading model...")
+
     model_directory = "20230106_114326"
     model_file = "vgg-weights-improve-01-0.038387.hdf5"
     model_filepath = os.path.join(os.getcwd(), "models", model_directory, model_file)
@@ -118,9 +102,32 @@ if __name__ == '__main__':
     opt = Adam(lr=INIT_LR)
     model.compile(loss="mse", optimizer=opt)
 
+    print("[INFO] model loaded...")
+    #############################################################################
+
     if UNSEEN:
-        print("[INFO] making predictions on unseen data...")
-        predict_unseen_images(model, unseen_filepaths, unseen_images, model_directory)
+        # load unseen images for prediction
+        print("[INFO] obtaining filepaths for unseen data...")
+        unseen_filepaths = construct_dataset.load_unseen_image_filepaths(ImgFolder)
+
+        for idx in range(len(unseen_filepaths)):
+            print("[INFO] loading set of images...")
+
+            if len(unseen_filepaths[idx]) == 0:
+                print("Filenames count not be retrieved from directory...")
+                continue
+
+            filepaths_to_predict = unseen_filepaths[idx] # one trial at a time
+            unseen_images = construct_dataset.load_unseen_images(filepaths_to_predict)
+
+            print("[INFO] making predictions on unseen data...")
+            predict_unseen_images(model, unseen_filepaths[idx], unseen_images, model_directory)
+
     else:
+        # load test set to evaluate accuracy
+        print("[INFO] loading test set...")
+        establishedTestSet = os.path.join(os.getcwd(), "data", "test.csv")
+        testFilenames, testImages, testTargets = construct_dataset.load_images_to_test(establishedTestSet, ImgFolder)
+
         print("[INFO] evaulating model performance on test set...")
         test_on_testset(model, testFilenames, testImages, testTargets, ImgFolder, model_directory)

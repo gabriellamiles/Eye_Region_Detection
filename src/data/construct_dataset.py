@@ -90,10 +90,8 @@ def load_images_to_test(filepath, ImgFolder):
 
     return df, testImages, testTargets
 
-def load_unseen_images(unseenDataFolder):
-
-    print("[INFO] Loading unseen images, large dataset: may take some time...")
-
+def load_unseen_image_filepaths(unseenDataFolder):
+    
     # get path to directories that contain the images
     participantDirectories = [os.path.join(unseenDataFolder, i) for i in os.listdir(unseenDataFolder)]
     imgDirectories = []
@@ -111,18 +109,16 @@ def load_unseen_images(unseenDataFolder):
 
         imgFilepaths.append(tmp_filepaths)
 
-    # load images
+    return imgFilepaths#, unseenImages
+
+def load_unseen_images(filepaths_to_predict):
+
     unseenImages = []
-    for set in imgFilepaths:
-        tmp_img_storage = []
 
-        for img_filepath in set:
-            image = load_img(img_filepath, target_size=(224,224))
-            image = img_to_array(image) / 255.0
-            image = np.expand_dims(image, axis=0)
-            tmp_img_storage.append(image)
+    for img_filepath in filepaths_to_predict:
+        image = load_img(img_filepath, target_size=(224,224))
+        image = img_to_array(image) / 255.0
+        image = np.expand_dims(image, axis=0)
+        unseenImages.append(image)
 
-
-        unseenImages.append(tmp_img_storage)
-
-    return imgFilepaths, unseenImages
+    return unseenImages
