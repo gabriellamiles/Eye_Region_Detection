@@ -114,10 +114,23 @@ if __name__ == '__main__':
         for idx in range(len(unseen_filepaths)):
             print("[INFO] loading set of images...")
 
+            # double-check that the directory contains images (some of them erroneously don't)
             if len(unseen_filepaths[idx]) == 0:
                 print("Filenames count not be retrieved from directory...")
                 continue
 
+            # check if predictions have already been made
+            print("****************")
+            print(unseen_filepaths[idx][0])
+            participant = unseen_filepaths[idx][0].split("eme2_square_imgs/")[-1].split("/")[0]
+            trial = unseen_filepaths[idx][0].split("eme2_square_imgs/")[-1].split("/")[1]
+            checkPath = os.path.join(os.getcwd(), "models", "20230109_142938", "predictions", participant + "_" + trial + ".csv")
+            print(checkPath)
+            if os.path.exists(checkPath):
+                print("Predictions for " + str(checkPath) + " already made, skipping these data...")
+                continue
+
+            # if predictions haven't been made
             filepaths_to_predict = unseen_filepaths[idx] # one trial at a time
             unseen_images = construct_dataset.load_unseen_images(filepaths_to_predict)
 
