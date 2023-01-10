@@ -120,12 +120,10 @@ if __name__ == '__main__':
                 continue
 
             # check if predictions have already been made
-            print("****************")
-            print(unseen_filepaths[idx][0])
             participant = unseen_filepaths[idx][0].split("eme2_square_imgs/")[-1].split("/")[0]
             trial = unseen_filepaths[idx][0].split("eme2_square_imgs/")[-1].split("/")[1]
             checkPath = os.path.join(os.getcwd(), "models", "20230109_142938", "predictions", participant + "_" + trial + ".csv")
-            print(checkPath)
+
             if os.path.exists(checkPath):
                 print("Predictions for " + str(checkPath) + " already made, skipping these data...")
                 continue
