@@ -10,4 +10,9 @@
 /share
 /pyvenv.cfg
 /docs
-*.pyc
+*.pyc*
+*.csv*
+labelInspectionVideos*
+resultsInspectionVideos*
+*2023*
+*.png*

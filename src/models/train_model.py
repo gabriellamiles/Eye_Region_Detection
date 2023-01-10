@@ -31,7 +31,7 @@ if __name__ == '__main__':
 
     # hyperparameters for models
     INIT_LR = 1e-4
-    NUM_EPOCHS = 1
+    NUM_EPOCHS = 30
     BATCH_SIZE = 32
 
     print(">>> Loading dataset...")

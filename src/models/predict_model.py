@@ -92,8 +92,8 @@ if __name__ == '__main__':
     # load and compile trained model
     print("[INFO] loading model...")
 
-    model_directory = "20230106_114326"
-    model_file = "vgg-weights-improve-01-0.038387.hdf5"
+    model_directory = "20230109_142938"
+    model_file = "vgg-weights-improve-29-0.000121.hdf5"
     model_filepath = os.path.join(os.getcwd(), "models", model_directory, model_file)
     model, keyword = model_utils.load_model(0)
     model.load_weights(model_filepath)
