@@ -14,7 +14,8 @@ import sys
 path = str(Path(Path(__file__).parent.absolute()).parent.absolute())
 sys.path.insert(0, path)
 
-import os
+import osopt = Adam(lr=INIT_LR)
+        model.compile(loss="mse", optimizer=opt)
 
 import model_utils
 from data import construct_dataset

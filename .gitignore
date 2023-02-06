@@ -10,7 +10,7 @@
 /share
 /pyvenv.cfg
 /docs
-*.pyc*
+(*/__pycache__/*)
 *.csv*
 labelInspectionVideos*
 resultsInspectionVideos*
