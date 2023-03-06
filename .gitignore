@@ -1,18 +1,25 @@
 
+# ignore virtual environment
 /bin
-/data/processed/mnt
 /include
 /lib
 /lib64
 /notebooks
-/project-management
-/reports
 /share
-/pyvenv.cfg
-/docs
-(*/__pycache__/*)
-*.csv*
+/venv
+*.cfg
+*.pyc
+
+# ignore experimental data
+/data/processed/mnt
+
+# ignore output folders
 labelInspectionVideos*
 resultsInspectionVideos*
-*2023*
+
+# ignore output filetypes
+(*/__pycache__/*)
+*.csv*
 *.png*
+*.hdf5
+*models/*
