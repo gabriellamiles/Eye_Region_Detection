@@ -63,7 +63,4 @@ if __name__ == '__main__':
     predictions = utils.load_files(predictionsFolder, column_key)
     print(len(predictions), len(predictions[0]))
 
-    # sort this into consecutive order
-    # predictions = reorder_predictions(predictions, reorderedPredictionsFolder)
-
     utils.display_results_from_predictions(predictions, imgFolder, videoFolder)

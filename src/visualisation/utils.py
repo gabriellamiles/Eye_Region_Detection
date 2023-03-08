@@ -32,6 +32,11 @@ def display_results_from_predictions(listOfFiles, imgFolder, saveFolder):
 
     for trial in listOfFiles:
 
+        # make sure in consecutive order
+        print(trial.head())
+        trial = trial.sort_values(by=['filename'])
+        print(trial.head())
+
         # initialise video
         videoTitle = trial.iloc[0, 0].split("/")[0] + "_" + trial.iloc[0, 0].split("/")[1] + ".avi"
         print(videoTitle)
