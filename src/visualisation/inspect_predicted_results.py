@@ -56,11 +56,23 @@ if __name__ == '__main__':
     imgFolder = os.path.join(rootFolder, "data", "processed", "mnt", "eme2_square_imgs")
     predictionsFolder = os.path.join(rootFolder, "models", "20230109_142938", "predictions")
     reorderedPredictionsFolder = os.path.join(rootFolder, "models", "20230106_114326", "predictions_reordered")
-    videoFolder = os.path.join(rootFolder, "src", "visualisation", "resultsInspectionVideos")
+    videoFolder = os.path.join(rootFolder, "src", "visualisation", "results_inspection_videos")
 
     # acquire output of ML models
     column_key = ['filename', 'LE_left', 'LE_top', 'LE_right', 'LE_bottom', 'RE_left', 'RE_top', 'RE_right', 'RE_bottom']
-    predictions = utils.load_files(predictionsFolder, column_key)
+
+
+    # narrow down predictions to ones that don't exist in directory
+    final_predictions = []
+    for filepath in os.listdir(predictionsFolder):
+        check_path = os.path.join(videoFolder, filepath.replace("csv", "avi"))
+        if os.path.exists(check_path):
+            continue
+        else:
+            final_predictions.append(os.path.join(predictionsFolder, filepath))
+
+    predictions = utils.load_files(final_predictions, column_key)
     print(len(predictions), len(predictions[0]))
 
+    # create video
     utils.display_results_from_predictions(predictions, imgFolder, videoFolder)

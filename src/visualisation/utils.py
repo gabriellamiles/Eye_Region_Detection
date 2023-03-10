@@ -3,20 +3,18 @@ import cv2
 
 import pandas as pd
 
-def load_files(folder, column_key):
+def load_files(list_of_filepaths, column_key):
     """
-    Function takes in (string) which is a filepath to the folder containing the ML-predicted results
+    Function takes in (list) which is a list of filepaths to the folder containing the ML-predicted results
     and returns these results as a list of dataframes, where each dataframe is the predictions of an
     individual trial.
+
 
     column_key: list of strings
     """
 
-    all_files = [os.path.join(folder, i) for i in os.listdir(folder)]
-
-    listOfFiles = []
-
-    for path in all_files:
+    all_df = []
+    for path in list_of_filepaths:
 
         # ignore everything that isn't a csv file
         if not path[-3:] == "csv":
@@ -24,9 +22,9 @@ def load_files(folder, column_key):
 
         # tmp_df = pd.read_csv(path)[['filename', 'startLX', 'startLY', 'endLX', 'endLY', 'startRX', 'startRY', 'endRX', 'endRY']]
         tmp_df = pd.read_csv(path)[column_key]
-        listOfFiles.append(tmp_df)
+        all_df.append(tmp_df)
 
-    return listOfFiles
+    return all_df
 
 def display_results_from_predictions(listOfFiles, imgFolder, saveFolder):
 
@@ -43,25 +41,28 @@ def display_results_from_predictions(listOfFiles, imgFolder, saveFolder):
         out = cv2.VideoWriter(os.path.join(saveFolder, videoTitle), cv2.VideoWriter_fourcc('M','J','P','G'), 160, (960,960))
 
 
-        for idx in range(trial.shape[0]):
+        # for idx in range(0, trial.shape[0]):
+        for idx in range(0, 160*10):
 
+            try:
+                print("Image: " + str(idx) + "/" + str(trial.shape[0]))
+                # find corresponding images
+                imgPath = os.path.join(imgFolder, trial.iloc[idx, 0])
+                im = cv2.imread(imgPath)
 
-            print("Image: " + str(idx) + "/" + str(trial.shape[0]))
-            # find corresponding images
-            imgPath = os.path.join(imgFolder, trial.iloc[idx, 0])
-            im = cv2.imread(imgPath)
+                # plot LEFT EYE prediction on corresponding imgs
+                start_point = (int(trial.iloc[idx, 1]), int(trial.iloc[idx, 2]))
+                end_point = (int(trial.iloc[idx, 3]), int(trial.iloc[idx, 4]))
+                cv2.rectangle(im, start_point, end_point, (255,0,0), 4) # blue
 
-            # plot LEFT EYE prediction on corresponding imgs
-            start_point = (int(trial.iloc[idx, 1]), int(trial.iloc[idx, 2]))
-            end_point = (int(trial.iloc[idx, 3]), int(trial.iloc[idx, 4]))
-            cv2.rectangle(im, start_point, end_point, (255,0,0), 4) # blue
+                # plot RIGHT EYE prediction on corresponding imgs
+                start_point = (int(trial.iloc[idx, 5]), int(trial.iloc[idx, 6]))
+                end_point = (int(trial.iloc[idx, 7]), int(trial.iloc[idx, 8]))
+                cv2.rectangle(im, start_point, end_point, (0,255,0) , 4) # green
 
-            # plot RIGHT EYE prediction on corresponding imgs
-            start_point = (int(trial.iloc[idx, 5]), int(trial.iloc[idx, 6]))
-            end_point = (int(trial.iloc[idx, 7]), int(trial.iloc[idx, 8]))
-            cv2.rectangle(im, start_point, end_point, (0,255,0) , 4) # green
-
-            # save video for inspection later
-            out.write(im)
+                # save video for inspection later
+                out.write(im)
+            except IndexError:
+                break
 
         out.release()
